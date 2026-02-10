@@ -2,62 +2,112 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    private static int readInt(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            if (scanner.hasNextInt()) {
+                int value = scanner.nextInt();
+                scanner.nextLine();
+                return value;
+            }
+            System.out.println("Invalid number. Try again.");
+            scanner.nextLine(); 
+        }
+    }
 
+    private static double readDouble(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            if (scanner.hasNextDouble()) {
+                double value = scanner.nextDouble();
+                scanner.nextLine(); 
+                return value;
+            }
+            System.out.println("Invalid number. Try again.");
+            scanner.nextLine(); 
+        }
+    }
+
+    private static String readLine(Scanner scanner, String prompt) {
+        System.out.print(prompt);
+        return scanner.nextLine().trim();
+    }
+
+    private static void printMenu() {
+        System.out.println("\n==== Library Menu ====");
+        System.out.println("1. Add book");
+        System.out.println("2. Add e-book");
+        System.out.println("3. Display all books");
+        System.out.println("4. Search book by title");
+        System.out.println("5. Borrow book");
+        System.out.println("6. Return book");
+        System.out.println("7. Exit");
+    }
+
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
         Library library = new Library(10);
 
-        int choice;
+        boolean running = true;
 
-        do {
-            System.out.println("\n===== Library Menu =====");
-            System.out.println("1. Add book");
-            System.out.println("2. Add e-book");
-            System.out.println("3. Display all books");
-            System.out.println("4. Search book by title");
-            System.out.println("5. Borrow book");
-            System.out.println("6. Return book");
-            System.out.println("7. Exit");
-            System.out.print("Choose option: ");
-
-            choice = scanner.nextInt();
-            scanner.nextLine(); // consume newline
+        while (running) {
+            printMenu();
+            int choice = readInt(scanner, "Choose an option (1-7): ");
 
             switch (choice) {
+                case 1: {
+                    String title = readLine(scanner, "Title: ");
+                    String author = readLine(scanner, "Author: ");
+                    int year = readInt(scanner, "Year: ");
 
-                case 1:
-                    // TODO: Read input and add Book
+                    Book book = new Book(title, author, year);
+                    library.addBook(book);
                     break;
+                }
+                case 2: {
+                    String title = readLine(scanner, "Title: ");
+                    String author = readLine(scanner, "Author: ");
+                    int year = readInt(scanner, "Year: ");
+                    double fileSize = readDouble(scanner, "File size (MB): ");
 
-                case 2:
-                    // TODO: Read input and add EBook
+                    Book ebook = new EBook(title, author, year, fileSize); 
+                    library.addBook(ebook);
                     break;
-
+                }
                 case 3:
                     library.displayBooks();
                     break;
 
-                case 4:
-                    // TODO: Search book
+                case 4: {
+                    String title = readLine(scanner, "Enter title to search: ");
+                    Book found = library.searchByTitle(title);
+                    if (found == null) {
+                        System.out.println("Book not found.");
+                    } else {
+                        System.out.println("Found: " + found);
+                    }
                     break;
-
-                case 5:
-                    // TODO: Borrow book
+                }
+                case 5: {
+                    String title = readLine(scanner, "Enter title to borrow: ");
+                    library.borrowBook(title);
                     break;
-
-                case 6:
-                    // TODO: Return book
+                }
+                case 6: {
+                    String title = readLine(scanner, "Enter title to return: ");
+                    library.returnBook(title);
                     break;
-
+                }
                 case 7:
+                    running = false;
                     System.out.println("Goodbye!");
                     break;
 
                 default:
-                    System.out.println("Invalid option!");
+                    System.out.println("Invalid choice. Please select 1-7.");
             }
-
-        } while (choice != 7);
+        }
 
         scanner.close();
     }
